@@ -1,11 +1,60 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const cases = await getCollection('cases');
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>The Vanishing Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <header class="shell">
+    <div class="shell-inner">
+      <p class="brand">The Vanishing Archive</p>
+      <p class="brand-tag">Every case here belongs to someone who never finished it. You're not solving a puzzle — you're picking up where they left off.</p>
+    </div>
+  </header>
+  <main>
+    <p class="index-label">CASE INDEX — SELECT A FILE TO OPEN</p>
+    <div class="case-list">
+      {cases.map((c) => (
+        <a href={`/cases/${c.id}`} class="case-row">
+          <span class="case-num">{c.data.number}</span>
+          <span class="case-body">
+            <p class="case-title">{c.data.title}</p>
+            <span class="case-meta">
+              <span>{c.data.genre}</span>
+              <span class="stamp" style={`--stamp-color:${c.data.theme.accent}`}>{c.data.status}</span>
+            </span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </main>
+</body>
+</html>
+
+<style>
+  body { margin: 0; min-height: 100%; background: #241f1a; color: #e8e0cc; font-family: 'IBM Plex Serif', serif; }
+  header.shell { padding: 2.6rem 1.5rem 1.8rem; border-bottom: 1px solid #52493a; background: #3a332a; }
+  .shell-inner, main { max-width: 760px; margin: 0 auto; }
+  .brand { font-family: 'Special Elite', monospace; font-size: 1.9rem; letter-spacing: 0.02em; margin: 0 0 .4rem; }
+  .brand-tag { color: #cfc6ab; font-size: .98rem; max-width: 46ch; line-height: 1.5; font-style: italic; }
+  main { padding: 2.2rem 1.5rem 4rem; }
+  .index-label { font-size: .85rem; color: #cfc6ab; margin-bottom: 1.1rem; border-bottom: 1px dashed #574e3d; padding-bottom: .6rem; }
+  .case-row { display: flex; gap: 1.1rem; align-items: flex-start; padding: 1.1rem 0; border-bottom: 1px solid #43392d; text-decoration: none; color: inherit; }
+  .case-row:hover .case-title { color: #f2c9a8; }
+  .case-num { font-family: 'Special Elite', monospace; color: #cfc6ab; font-size: .85rem; width: 4.4rem; flex: none; padding-top: .15rem; }
+  .case-title { font-size: 1.18rem; margin: 0 0 .3rem; transition: color .15s ease; }
+  .case-meta { font-size: .85rem; color: #cfc6ab; display: flex; gap: .9rem; flex-wrap: wrap; }
+  .stamp { display: inline-block; border: 1.5px solid var(--stamp-color, #7a6a4d); color: var(--stamp-color, #7a6a4d); padding: .1rem .5rem; border-radius: 2px; transform: rotate(-3deg); font-family: 'Special Elite', monospace; font-size: .72rem; }
+</style>
